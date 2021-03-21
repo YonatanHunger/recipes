@@ -28,4 +28,14 @@ public class RecipesController {
     public List<Recipe> getAllRecipes() {
         return recipesService.getAllRecipes();
     }
+
+    @GetMapping("/{category}")
+    public List<Recipe> getAllRecipesByCategory(@PathVariable String category) {
+        try {
+            return recipesService.getRecipesByCategory(category);
+        } catch (NoSuchCategory noSuchCategory) {
+            log.info("User tried to Search for Unknown category {}", category);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No souch category: " + category);
+        }
+    }
 }
