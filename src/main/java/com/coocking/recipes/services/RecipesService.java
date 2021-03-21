@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class RecipesService {
@@ -37,4 +39,7 @@ public class RecipesService {
     }
 
 
+    public Set<Recipe> searchRecipes(String query) {
+        return recipesDal.getRecipesSearchString().getOrDefault(query.trim().toLowerCase(), Collections.emptySet());
+    }
 }

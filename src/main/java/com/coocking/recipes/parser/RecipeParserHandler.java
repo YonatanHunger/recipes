@@ -49,7 +49,7 @@ public class RecipeParserHandler implements ElementHandler {
                             } else {
                                 Node qty = ((Element) el).element("qty").detach();
                                 if (!qty.getText().isBlank()) {
-                                    ingredient.setQuantity(Integer.valueOf(qty.getText()));
+                                    ingredient.setQuantity(qty.getText());
                                 }
                                 Node unit = ((Element) el).element("unit").detach();
                                 if (!unit.getText().isBlank()) {

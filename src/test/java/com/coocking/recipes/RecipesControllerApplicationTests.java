@@ -27,6 +27,7 @@ class RecipesControllerApplicationTests {
     private static final String RECIPES = "/recipes";
     private static final String MICROWAVE_CATEGORY = RECIPES + "/Microwave";
     private static final String FOO_CATEGORY = RECIPES + "/FOO";
+    private static final String SEARCH = RECIPES + "/search";
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
@@ -68,6 +69,68 @@ class RecipesControllerApplicationTests {
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andReturn();
+    }
+
+    @Test
+    void searchNotFound() throws Exception {
+        String category = "Fooo";
+       mockMvc.perform(MockMvcRequestBuilders.get(SEARCH).queryParam("query", category)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andReturn();
+    }
+
+    @Test
+    void searchByCategory() throws Exception {
+        String category = "Cakes";
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get(SEARCH).queryParam("query", category)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+        String content = result.getResponse().getContentAsString();
+        List<Recipe> recipes = objectMapper.readValue(content, new TypeReference<List<Recipe>>() {
+        });
+        Assertions.assertTrue(recipes.stream().allMatch(recipe -> recipe.getCategories().stream().anyMatch(cat -> cat.equals(category))), "Could not find query in category");
+    }
+
+    @Test
+    void searchByCategoryAssertCaseInsensitive() throws Exception {
+        String category = "    CaKeS            ";
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get(SEARCH).queryParam("query", category)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+        String content = result.getResponse().getContentAsString();
+        List<Recipe> recipes = objectMapper.readValue(content, new TypeReference<List<Recipe>>() {
+        });
+        Assertions.assertTrue(recipes.stream().allMatch(recipe -> recipe.getCategories().stream().anyMatch(cat -> cat.equalsIgnoreCase(category.trim()))), "Could not find query in category");
+    }
+
+
+    @Test
+    void searchByIngredient() throws Exception {
+        String Ingredient = "Vanilla instant pudding";
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get(SEARCH).queryParam("query", Ingredient)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+        String content = result.getResponse().getContentAsString();
+        List<Recipe> recipes = objectMapper.readValue(content, new TypeReference<List<Recipe>>() {
+        });
+        Assertions.assertTrue(recipes.stream().allMatch(recipe -> recipe.getIngredients().stream().anyMatch(ing -> ing.getName().equalsIgnoreCase(Ingredient.trim()))), "Could not find query in ingredient");
+    }
+
+    @Test
+    void searchByTitle() throws Exception {
+        String title = "Another Zucchini Dish";
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get(SEARCH).queryParam("query", title)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+        String content = result.getResponse().getContentAsString();
+        List<Recipe> recipes = objectMapper.readValue(content, new TypeReference<List<Recipe>>() {
+        });
+        Assertions.assertTrue(recipes.stream().allMatch(recipe -> recipe.getTitle().equalsIgnoreCase(title.trim())), "Could not find query in ingredient");
     }
 
 }

@@ -1,6 +1,7 @@
 package com.coocking.recipes.dto;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Data
+@EqualsAndHashCode(of = "recipeId")
 public class Recipe {
     private String recipeId = UUID.randomUUID().toString();
     @NotBlank(message = "Title is mandatory")

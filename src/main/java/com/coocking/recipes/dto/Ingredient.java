@@ -8,7 +8,7 @@ import javax.validation.constraints.NotBlank;
 
 @Data
 public class Ingredient {
-    private Integer quantity;
+    private String quantity;
     private String unit;
     @NotBlank(message = "Ingredient must include name")
     private String name;

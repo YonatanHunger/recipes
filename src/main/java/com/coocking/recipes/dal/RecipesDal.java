@@ -16,12 +16,24 @@ public class RecipesDal {
     private final List<Recipe> recipes;
     private final Map<String, List<Recipe>> recipeByCategory = new HashMap<>();
     private final Set<String> recipesNames = new HashSet<>();
+    private final Map<String, Set<Recipe>> recipesSearchString = new HashMap<>();
 
     @Autowired
     public RecipesDal(XmlDeserializerService xmlDeserializerService) throws IOException, DocumentException {
         recipes = xmlDeserializerService.loadFromResource();
         recipes.forEach(recipe -> {
-            recipe.getCategories().forEach(category -> recipeByCategory.computeIfAbsent(category, x -> new ArrayList<>()).add(recipe));
+            recipe.getCategories().forEach(category -> {
+                recipeByCategory.computeIfAbsent(category, x -> new ArrayList<>()).add(recipe);
+                recipesSearchString.computeIfAbsent(category.trim().toLowerCase(), x -> new HashSet<>()).add(recipe);
+            });
+            recipesSearchString.computeIfAbsent(recipe.getTitle().trim().toLowerCase(), x -> new HashSet<>()).add(recipe);
+            recipe.getIngredients().forEach(ingredient -> {
+                String ingredientName = ingredient.getName();
+                if (ingredientName.contains(";")) {
+                    ingredientName = ingredientName.substring(0, ingredientName.indexOf(";"));
+                }
+                recipesSearchString.computeIfAbsent(ingredientName.trim().toLowerCase(), x -> new HashSet<>()).add(recipe);
+            });
             recipesNames.add(recipe.getTitle());
         });
     }
