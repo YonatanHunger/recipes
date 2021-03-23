@@ -1,7 +1,7 @@
 package com.coocking.recipes.parser;
 
 import com.coocking.recipes.dto.IngredientSection;
-import com.coocking.recipes.dto.IngredientQnty;
+import com.coocking.recipes.dto.IngredientQuantity;
 import com.coocking.recipes.dto.Recipe;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -47,8 +47,8 @@ public class RecipeParserHandler implements ElementHandler {
                         element.elements().forEach(el -> {
                             Node innerNode = ((Element) el).detach();
                             if (innerNode.getName().equals("ing")) {
-                                IngredientQnty ingredientQnty = getIngredientQnty((Element) el);
-                                ingredientSection.getIngredientQuantities().add(ingredientQnty);
+                                IngredientQuantity ingredientQuantity = getIngredientQnty((Element) el);
+                                ingredientSection.getIngredientQuantities().add(ingredientQuantity);
                             }
                         });
                         recipe.getIngredientSections().add(ingredientSection);
@@ -62,8 +62,8 @@ public class RecipeParserHandler implements ElementHandler {
                         } else {
                             ingredientSection = recipe.getIngredientSections().get(0);
                         }
-                        IngredientQnty ingredientQnty = getIngredientQnty(element);
-                        ingredientSection.getIngredientQuantities().add(ingredientQnty);
+                        IngredientQuantity ingredientQuantity = getIngredientQnty(element);
+                        ingredientSection.getIngredientQuantities().add(ingredientQuantity);
                         break;
                     }
                     case "step": {
@@ -78,23 +78,23 @@ public class RecipeParserHandler implements ElementHandler {
         }
     }
 
-    private IngredientQnty getIngredientQnty(Element element) {
-        IngredientQnty ingredientQnty = new IngredientQnty();
+    private IngredientQuantity getIngredientQnty(Element element) {
+        IngredientQuantity ingredientQuantity = new IngredientQuantity();
         element.elements().forEach(el -> {
             Node innerNode = ((Element) el).detach();
             if ("item".equals(innerNode.getName())) {
-                ingredientQnty.setName(innerNode.getText());
+                ingredientQuantity.setName(innerNode.getText());
             } else {
                 Node qty = ((Element) el).element("qty").detach();
                 if (!qty.getText().isBlank()) {
-                    ingredientQnty.setQuantity(qty.getText());
+                    ingredientQuantity.setQuantity(qty.getText());
                 }
                 Node unit = ((Element) el).element("unit").detach();
                 if (!unit.getText().isBlank()) {
-                    ingredientQnty.setUnit(unit.getText());
+                    ingredientQuantity.setUnit(unit.getText());
                 }
             }
         });
-        return ingredientQnty;
+        return ingredientQuantity;
     }
 }

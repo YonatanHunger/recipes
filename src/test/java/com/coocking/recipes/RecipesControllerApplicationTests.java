@@ -27,7 +27,7 @@ class RecipesControllerApplicationTests {
     private static final String RECIPES = "/recipes";
     private static final String MICROWAVE_CATEGORY = RECIPES + "/Microwave";
     private static final String FOO_CATEGORY = RECIPES + "/FOO";
-    private static final String SEARCH = RECIPES + "/search";
+    protected static final String SEARCH = RECIPES + "/search";
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
@@ -37,7 +37,7 @@ class RecipesControllerApplicationTests {
                 .andExpect(status().isOk())
                 .andReturn();
         String content = result.getResponse().getContentAsString();
-        List<Recipe> recipes = objectMapper.readValue(content, new TypeReference<List<Recipe>>() {
+        List<Recipe> recipes = objectMapper.readValue(content, new TypeReference<>() {
         });
         Assertions.assertEquals(3, recipes.size(), "Unexpected number of recipes");
         //without sections
@@ -67,7 +67,7 @@ class RecipesControllerApplicationTests {
                 .andExpect(status().isOk())
                 .andReturn();
         String content = result.getResponse().getContentAsString();
-        List<Recipe> recipes = objectMapper.readValue(content, new TypeReference<List<Recipe>>() {
+        List<Recipe> recipes = objectMapper.readValue(content, new TypeReference<>() {
         });
         Assertions.assertEquals(1, recipes.size(), "Unexpected number of recipes");
         Optional<Recipe> zucchini = recipes.stream().filter(recipe -> recipe.getTitle().contains("Zucchini")).findFirst();
@@ -99,7 +99,7 @@ class RecipesControllerApplicationTests {
                 .andExpect(status().isOk())
                 .andReturn();
         String content = result.getResponse().getContentAsString();
-        List<Recipe> recipes = objectMapper.readValue(content, new TypeReference<List<Recipe>>() {
+        List<Recipe> recipes = objectMapper.readValue(content, new TypeReference<>() {
         });
         Assertions.assertTrue(recipes.stream().allMatch(recipe -> recipe.getCategories().stream().anyMatch(cat -> cat.equals(category))), "Could not find query in category");
     }
@@ -112,7 +112,7 @@ class RecipesControllerApplicationTests {
                 .andExpect(status().isOk())
                 .andReturn();
         String content = result.getResponse().getContentAsString();
-        List<Recipe> recipes = objectMapper.readValue(content, new TypeReference<List<Recipe>>() {
+        List<Recipe> recipes = objectMapper.readValue(content, new TypeReference<>() {
         });
         Assertions.assertTrue(recipes.stream().allMatch(recipe -> recipe.getCategories().stream().anyMatch(cat -> cat.equalsIgnoreCase(category.trim()))), "Could not find query in category");
     }
@@ -126,7 +126,7 @@ class RecipesControllerApplicationTests {
                 .andExpect(status().isOk())
                 .andReturn();
         String content = result.getResponse().getContentAsString();
-        List<Recipe> recipes = objectMapper.readValue(content, new TypeReference<List<Recipe>>() {
+        List<Recipe> recipes = objectMapper.readValue(content, new TypeReference<>() {
         });
         Assertions.assertTrue(recipes.stream().allMatch(recipe -> recipe.getIngredientSections().stream().anyMatch(ing -> ing.getIngredientQuantities().stream().anyMatch(ingredientQnty -> ingredientQnty.getName().equalsIgnoreCase(Ingredient.trim())))), "Could not find query in ingredient");
     }
@@ -139,7 +139,7 @@ class RecipesControllerApplicationTests {
                 .andExpect(status().isOk())
                 .andReturn();
         String content = result.getResponse().getContentAsString();
-        List<Recipe> recipes = objectMapper.readValue(content, new TypeReference<List<Recipe>>() {
+        List<Recipe> recipes = objectMapper.readValue(content, new TypeReference<>() {
         });
         Assertions.assertTrue(recipes.stream().allMatch(recipe -> recipe.getTitle().equalsIgnoreCase(title.trim())), "Could not find query in ingredient");
     }
@@ -153,7 +153,7 @@ class RecipesControllerApplicationTests {
                 .andExpect(status().isOk())
                 .andReturn();
         String content = result.getResponse().getContentAsString();
-        List<Recipe> recipes = objectMapper.readValue(content, new TypeReference<List<Recipe>>() {
+        List<Recipe> recipes = objectMapper.readValue(content, new TypeReference<>() {
         });
         Assertions.assertTrue(recipes.stream().allMatch(recipe -> recipe.getDirections().stream().anyMatch(step -> step.contains(freeText))), "Could not find query in ingredient");
     }

@@ -7,11 +7,7 @@ import com.coocking.recipes.excaptions.TitleAlreadyPresent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.validation.Valid;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,16 +26,6 @@ public class RecipesService {
         return recipesDal.getRecipeByCategory().get(category);
     }
 
-    public void saveRecipe(@Valid Recipe recipe) {
-        validate(recipe);
-    }
-
-    private void validate(Recipe recipe) {
-        if (recipesDal.getRecipesNames().contains(recipe.getTitle())) {
-            throw new TitleAlreadyPresent(recipe.getTitle());
-        }
-    }
-
 
     public Set<Recipe> searchRecipes(String query) {
         //find keyWords
@@ -50,5 +36,18 @@ public class RecipesService {
         Set<Recipe> foundResults = candidates.stream().filter(recipe -> recipe.getDirections().stream().anyMatch(step -> step.contains(query))).collect(Collectors.toSet());
         foundResults.addAll(foundByKeyWords);
         return foundResults;
+    }
+
+    public String addNewRecipe(Recipe recipe) {
+        validate(recipe);
+        recipe.setRecipeId(UUID.randomUUID().toString());
+        recipesDal.addRecipe(recipe);
+        return recipe.getRecipeId();
+    }
+
+    private void validate(Recipe recipe) {
+        if (recipesDal.getRecipesNames().contains(recipe.getTitle())) {
+            throw new TitleAlreadyPresent(recipe.getTitle());
+        }
     }
 }

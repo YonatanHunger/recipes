@@ -5,9 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.validation.constraints.NotBlank;
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +17,7 @@ import java.util.List;
 public class IngredientSection {
     private String section;
     @NotEmpty
+    @Valid
     @Builder.Default
-    private List<IngredientQnty> ingredientQuantities = new ArrayList<>();
+    private List<IngredientQuantity> ingredientQuantities = new ArrayList<>();
 }

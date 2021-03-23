@@ -6,6 +6,8 @@ import lombok.EqualsAndHashCode;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -13,10 +15,11 @@ import java.util.UUID;
 @Data
 @EqualsAndHashCode(of = "recipeId")
 public class Recipe {
+    @Null
     private String recipeId = UUID.randomUUID().toString();
     @NotBlank(message = "Title is mandatory")
     private String title;
-    @NotBlank(message = "Yields is mandatory")
+    @NotNull(message = "Yields is mandatory")
     private Integer yields;
     @NotEmpty(message = "Categories must include at least one category")
     private List<String> categories = new ArrayList<>();
