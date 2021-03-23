@@ -32,7 +32,7 @@ public class XmlDeserializerService {
             reader.addHandler("/recipeml/recipe/head/categories", recipeParserHandler);
             reader.addHandler("/recipeml/recipe/head/yield", recipeParserHandler);
             reader.addHandler("/recipeml/recipe/ingredients/ing", recipeParserHandler);
-            reader.addHandler("/recipeml/recipe/ingredients/ing-div/ing", recipeParserHandler);
+            reader.addHandler("/recipeml/recipe/ingredients/ing-div", recipeParserHandler);
             reader.addHandler("/recipeml/recipe/directions/step", recipeParserHandler);
             reader.read(resource.getURL());
             if (recipeParserHandler.isFailed()) {

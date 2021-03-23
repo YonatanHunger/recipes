@@ -40,12 +40,23 @@ class RecipesControllerApplicationTests {
         List<Recipe> recipes = objectMapper.readValue(content, new TypeReference<List<Recipe>>() {
         });
         Assertions.assertEquals(3, recipes.size(), "Unexpected number of recipes");
+        //without sections
         Optional<Recipe> chili = recipes.stream().filter(recipe -> recipe.getTitle().contains("Chili")).findFirst();
         Assertions.assertTrue(chili.isPresent(), "did not found chili recipe");
         Recipe chiliRecipe = chili.get();
         Assertions.assertEquals(2, chiliRecipe.getCategories().size(), "Unexpected number of categories");
-        Assertions.assertEquals(7, chiliRecipe.getIngredients().size(), "Unexpected number of ingredients");
+        Assertions.assertEquals(1, chiliRecipe.getIngredientSections().size(), "Unexpected number of ingredients sections");
+        Assertions.assertEquals(7, chiliRecipe.getIngredientSections().get(0).getIngredientQuantities().size(), "Unexpected number of ingredient Quantities ");
         Assertions.assertEquals(1, chiliRecipe.getDirections().size(), "Unexpected number of directions");
+
+        //with sections
+        Optional<Recipe> amaretto = recipes.stream().filter(recipe -> recipe.getTitle().contains("Amaretto")).findFirst();
+        Assertions.assertTrue(chili.isPresent(), "did not found chili recipe");
+        Recipe amarettoRecipe = amaretto.get();
+        Assertions.assertEquals(3, amarettoRecipe.getCategories().size(), "Unexpected number of categories");
+        Assertions.assertEquals(2, amarettoRecipe.getIngredientSections().size(), "Unexpected number of ingredients sections");
+        Assertions.assertEquals(8, amarettoRecipe.getIngredientSections().get(0).getIngredientQuantities().size(), "Unexpected number of ingredient Quantities ");
+        Assertions.assertEquals(1, amarettoRecipe.getDirections().size(), "Unexpected number of directions");
     }
 
 
@@ -117,7 +128,7 @@ class RecipesControllerApplicationTests {
         String content = result.getResponse().getContentAsString();
         List<Recipe> recipes = objectMapper.readValue(content, new TypeReference<List<Recipe>>() {
         });
-        Assertions.assertTrue(recipes.stream().allMatch(recipe -> recipe.getIngredients().stream().anyMatch(ing -> ing.getName().equalsIgnoreCase(Ingredient.trim()))), "Could not find query in ingredient");
+        Assertions.assertTrue(recipes.stream().allMatch(recipe -> recipe.getIngredientSections().stream().anyMatch(ing -> ing.getIngredientQuantities().stream().anyMatch(ingredientQnty -> ingredientQnty.getName().equalsIgnoreCase(Ingredient.trim())))), "Could not find query in ingredient");
     }
 
     @Test

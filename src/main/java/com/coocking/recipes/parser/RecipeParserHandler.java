@@ -1,6 +1,7 @@
 package com.coocking.recipes.parser;
 
-import com.coocking.recipes.dto.Ingredient;
+import com.coocking.recipes.dto.IngredientSection;
+import com.coocking.recipes.dto.IngredientQnty;
 import com.coocking.recipes.dto.Recipe;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -40,24 +41,29 @@ public class RecipeParserHandler implements ElementHandler {
                         recipe.setYields(Integer.valueOf(node.getText()));
                         break;
                     }
-                    case "ing": {
-                        Ingredient ingredient = new Ingredient();
+                    case "ing-div": {
+                        Node title = element.element("title").detach();
+                        IngredientSection ingredientSection = IngredientSection.builder().section(title.getText()).build();
                         element.elements().forEach(el -> {
                             Node innerNode = ((Element) el).detach();
-                            if ("item".equals(innerNode.getName())) {
-                                ingredient.setName(innerNode.getText());
-                            } else {
-                                Node qty = ((Element) el).element("qty").detach();
-                                if (!qty.getText().isBlank()) {
-                                    ingredient.setQuantity(qty.getText());
-                                }
-                                Node unit = ((Element) el).element("unit").detach();
-                                if (!unit.getText().isBlank()) {
-                                    ingredient.setUnit(unit.getText());
-                                }
+                            if (innerNode.getName().equals("ing")) {
+                                IngredientQnty ingredientQnty = getIngredientQnty((Element) el);
+                                ingredientSection.getIngredientQuantities().add(ingredientQnty);
                             }
                         });
-                        recipe.getIngredients().add(ingredient);
+                        recipe.getIngredientSections().add(ingredientSection);
+                        break;
+                    }
+                    case "ing": {
+                        IngredientSection ingredientSection;
+                        if (recipe.getIngredientSections().isEmpty()) {
+                            ingredientSection = new IngredientSection();
+                            recipe.getIngredientSections().add(ingredientSection);
+                        } else {
+                            ingredientSection = recipe.getIngredientSections().get(0);
+                        }
+                        IngredientQnty ingredientQnty = getIngredientQnty(element);
+                        ingredientSection.getIngredientQuantities().add(ingredientQnty);
                         break;
                     }
                     case "step": {
@@ -70,5 +76,25 @@ public class RecipeParserHandler implements ElementHandler {
             failed = true;
             log.error("Error on element {}", element, e);
         }
+    }
+
+    private IngredientQnty getIngredientQnty(Element element) {
+        IngredientQnty ingredientQnty = new IngredientQnty();
+        element.elements().forEach(el -> {
+            Node innerNode = ((Element) el).detach();
+            if ("item".equals(innerNode.getName())) {
+                ingredientQnty.setName(innerNode.getText());
+            } else {
+                Node qty = ((Element) el).element("qty").detach();
+                if (!qty.getText().isBlank()) {
+                    ingredientQnty.setQuantity(qty.getText());
+                }
+                Node unit = ((Element) el).element("unit").detach();
+                if (!unit.getText().isBlank()) {
+                    ingredientQnty.setUnit(unit.getText());
+                }
+            }
+        });
+        return ingredientQnty;
     }
 }

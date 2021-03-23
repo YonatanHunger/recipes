@@ -27,12 +27,14 @@ public class RecipesDal {
                 recipesSearchString.computeIfAbsent(category.trim().toLowerCase(), x -> new HashSet<>()).add(recipe);
             });
             recipesSearchString.computeIfAbsent(recipe.getTitle().trim().toLowerCase(), x -> new HashSet<>()).add(recipe);
-            recipe.getIngredients().forEach(ingredient -> {
-                String ingredientName = ingredient.getName();
-                if (ingredientName.contains(";")) {
-                    ingredientName = ingredientName.substring(0, ingredientName.indexOf(";"));
-                }
-                recipesSearchString.computeIfAbsent(ingredientName.trim().toLowerCase(), x -> new HashSet<>()).add(recipe);
+            recipe.getIngredientSections().forEach(ingredient -> {
+                ingredient.getIngredientQuantities().forEach(ingredientQnty -> {
+                    String ingredientName = ingredientQnty.getName();
+                    if (ingredientName.contains(";")) {
+                        ingredientName = ingredientName.substring(0, ingredientName.indexOf(";"));
+                    }
+                    recipesSearchString.computeIfAbsent(ingredientName.trim().toLowerCase(), x -> new HashSet<>()).add(recipe);
+                });
             });
             recipesNames.add(recipe.getTitle());
         });

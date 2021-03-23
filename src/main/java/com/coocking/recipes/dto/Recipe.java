@@ -22,7 +22,7 @@ public class Recipe {
     private List<String> categories = new ArrayList<>();
     @NotEmpty(message = "Ingredients must include at least one category")
     @Valid
-    private List<Ingredient> ingredients = new ArrayList<>();
+    private List<IngredientSection> ingredientSections = new ArrayList<>();
     @NotEmpty(message = "directions must include at least one category")
     private List<String> directions = new ArrayList<>();
 }
