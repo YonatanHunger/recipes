@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class RecipesService {
@@ -40,6 +42,13 @@ public class RecipesService {
 
 
     public Set<Recipe> searchRecipes(String query) {
-        return recipesDal.getRecipesSearchString().getOrDefault(query.trim().toLowerCase(), Collections.emptySet());
+        //find keyWords
+        Set<Recipe> foundByKeyWords = recipesDal.getRecipesSearchString().getOrDefault(query.trim().toLowerCase(), Collections.emptySet());
+        Set<Recipe> candidates = new HashSet<>(recipesDal.getRecipes());
+        candidates.removeAll(foundByKeyWords);
+        //find free text
+        Set<Recipe> foundResults = candidates.stream().filter(recipe -> recipe.getDirections().stream().anyMatch(step -> step.contains(query))).collect(Collectors.toSet());
+        foundResults.addAll(foundByKeyWords);
+        return foundResults;
     }
 }

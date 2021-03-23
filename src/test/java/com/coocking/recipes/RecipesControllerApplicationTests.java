@@ -85,7 +85,7 @@ class RecipesControllerApplicationTests {
     @Test
     void searchNotFound() throws Exception {
         String category = "Fooo";
-       mockMvc.perform(MockMvcRequestBuilders.get(SEARCH).queryParam("query", category)
+        mockMvc.perform(MockMvcRequestBuilders.get(SEARCH).queryParam("query", category)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andReturn();
@@ -142,6 +142,20 @@ class RecipesControllerApplicationTests {
         List<Recipe> recipes = objectMapper.readValue(content, new TypeReference<List<Recipe>>() {
         });
         Assertions.assertTrue(recipes.stream().allMatch(recipe -> recipe.getTitle().equalsIgnoreCase(title.trim())), "Could not find query in ingredient");
+    }
+
+
+    @Test
+    void searchByDirections() throws Exception {
+        String freeText = "remove from pan";
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get(SEARCH).queryParam("query", freeText)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+        String content = result.getResponse().getContentAsString();
+        List<Recipe> recipes = objectMapper.readValue(content, new TypeReference<List<Recipe>>() {
+        });
+        Assertions.assertTrue(recipes.stream().allMatch(recipe -> recipe.getDirections().stream().anyMatch(step -> step.contains(freeText))), "Could not find query in ingredient");
     }
 
 }
