@@ -10,13 +10,12 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @EqualsAndHashCode(of = "recipeId")
 public class Recipe {
     @Null
-    private String recipeId = UUID.randomUUID().toString();
+    private String recipeId;
     @NotBlank(message = "Title is mandatory")
     private String title;
     @NotNull(message = "Yields is mandatory")

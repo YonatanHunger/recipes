@@ -41,11 +41,20 @@ class AddNewRecipesControllerTests {
                 .andReturn();
         String id = result.getResponse().getContentAsString();
 
-        result = mockMvc.perform(MockMvcRequestBuilders.get(SEARCH).queryParam("query", recipe.getTitle())
+        result = mockMvc.perform(MockMvcRequestBuilders.get(RECIPES)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
         String content = result.getResponse().getContentAsString();
+        List<Recipe> allRecipes = objectMapper.readValue(content, new TypeReference<>() {
+        });
+        Assertions.assertEquals(4, allRecipes.size(), "New recipe was not added to recipes");
+
+        result = mockMvc.perform(MockMvcRequestBuilders.get(SEARCH).queryParam("query", recipe.getTitle())
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+        content = result.getResponse().getContentAsString();
         List<Recipe> recipes = objectMapper.readValue(content, new TypeReference<>() {
         });
         Assertions.assertTrue(recipes.stream().allMatch(foundRecipe -> foundRecipe.getRecipeId().equals(id)), "Could not find the created recipe");
@@ -219,7 +228,6 @@ class AddNewRecipesControllerTests {
 
     private Recipe getValidRecipe() {
         Recipe recipe = new Recipe();
-        recipe.setRecipeId(null);
         recipe.setTitle(UUID.randomUUID().toString());
         recipe.setYields(4);
         recipe.setCategories(List.of("foo"));
