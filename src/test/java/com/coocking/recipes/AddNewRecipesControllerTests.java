@@ -16,7 +16,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static com.coocking.recipes.RecipesControllerApplicationTests.SEARCH;
